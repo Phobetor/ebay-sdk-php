@@ -10,6 +10,10 @@ class JsonParser
     public static function parseAndAssignProperties($object, $json)
     {
         $properties = $json !== '' ? json_decode($json, true) : [];
+        // Bodies that are not a JSON object (e.g. an HTML error page of a gateway) carry no properties.
+        if (!is_array($properties)) {
+            $properties = [];
+        }
         self::assignProperties($object, $properties);
     }
 

@@ -331,8 +331,14 @@ class OAuthService
                     $this->debugResponse($json);
                 }
 
+                $values = $json !== '' ? json_decode($json, true) : [];
+                // Bodies that are not a JSON object (e.g. an HTML error page of a gateway) carry no values.
+                if (!is_array($values)) {
+                    $values = [];
+                }
+
                 return new $responseClass(
-                    $json !== '' ? json_decode($json, true) : [],
+                    $values,
                     $res->getStatusCode(),
                     $res->getHeaders()
                 );
