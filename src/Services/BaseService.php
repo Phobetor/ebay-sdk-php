@@ -162,6 +162,11 @@ abstract class BaseService
             $this->debugRequest($url, $headers, $body);
         }
 
+        // PSR-7 expects header values as strings (e.g. integer site ids or Content-Length).
+        $headers = array_map(function ($value) {
+            return is_scalar($value) ? (string) $value : $value;
+        }, $headers);
+
         $request = new Request('POST', $url, $headers, $body);
 
         return $httpHandler($request, $httpOptions)->then(

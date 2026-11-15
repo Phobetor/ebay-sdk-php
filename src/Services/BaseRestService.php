@@ -131,7 +131,7 @@ abstract class BaseRestService
      *
      * @return \GuzzleHttp\Promise\PromiseInterface A promise that will be resolved with an object created from the JSON response.
      */
-    protected function callOperationAsync($name, \DTS\eBaySDK\Types\BaseType $request = null)
+    protected function callOperationAsync($name, ?\DTS\eBaySDK\Types\BaseType $request = null)
     {
         $operation = static::$operations[$name];
 
@@ -162,6 +162,11 @@ abstract class BaseRestService
         if ($debug !== false) {
             $this->debugRequest($url, $headers, $body);
         }
+
+        // PSR-7 expects header values as strings (e.g. integer site ids or Content-Length).
+        $headers = array_map(function ($value) {
+            return is_scalar($value) ? (string) $value : $value;
+        }, $headers);
 
         $request = new Request($method, $url, $headers, $body);
 
